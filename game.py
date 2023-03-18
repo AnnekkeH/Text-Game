@@ -44,8 +44,23 @@ def Choice(): # what are you going to do mechanic
 Intro()
 Mission()
 Choice()
-while UserInput in UserChoices:
-	if UserInput == "M":
-		print("yipeeee")
-	else:
-		print("Not A Valid Input.")
+
+# doesnt work for some reason, only to valid input
+if UserInput == UserChoices[0]:
+	print("up works")
+elif UserInput == UserChoices[1]:
+	print("right works")
+elif UserInput == UserChoices[2]:
+	print("down works")
+elif UserInput == UserChoices[3]:
+	print("left works")
+elif UserInput == UserChoices[4]:
+	print("search works")
+elif UserInput == UserChoices[5]:
+	print("mission works")
+elif UserInput == UserChoices[6]:
+	print("use works")
+elif UserInput == UserChoices[7]:
+	print("inventory works")
+else:
+	print("Not A Valid Input.")
