@@ -1,6 +1,6 @@
 import random
 
-UserChoices = ["U", "UP", "R", "RIGHT", "D", "DOWN", "L", "LEFT", "S", "SEARCH", "M", "MISSION", "U", "USE", "I", "INVENTORY"]
+UserChoices = ["U", "UP", "R", "RIGHT", "D", "DOWN", "L", "LEFT", "S", "SEARCH", "M", "MISSION", "U", "USE", "I", "INVENTORY", "Q", "QUIT"]
 UserInput = "test" # ALWAYS .UPPER UserInput
 Inventory = ["Gear", "Spark Plug"]
 
@@ -28,6 +28,7 @@ def mission(): # Prints mission from start of game
 	print("LED             >> Break Room (Down)")
 	print("Duct Tape       >> Ship Dock (Left)")
 	print("--type “Mission” or “M” at any time to bring this menu back--")
+	print("--type “Quit” or “Q” at at any time to save and quit--")
 
 def inventory(): # DOES NOT WORK, REFUSES TO ITERATE THROUGH MY JANK INVENTORY
 	inventoryList = " "
@@ -36,48 +37,91 @@ def inventory(): # DOES NOT WORK, REFUSES TO ITERATE THROUGH MY JANK INVENTORY
 		if i == "":
 			print("Nothing!!")
 			print("Run around to find the missing parts! Use H or Help if you are lost.")
-		inventoryList += print(Inventory[i])
+		print(Inventory[i])
 	return inventoryList
+
+def quit():
+	confirm = input("Are you sure you want to save and quit? (Yes/No)").upper() # confirm quit
+	if 'Y' in confirm:
+		name = input("What do you want to name your save file?") # get name of file
+		with open(f"{name}.txt", "w") as file: # write it
+		file.write(f"{inventory}\n") # add info (inventory, active room location, parts)
+	elif 'N' in confirm:
+		print("Okay! Have fun!")
+	else:
+		print("Not Valid Input")
+	# save game to file
+	# quit
 
 def choice(): # checks if user choice is valid
 	UserInput = input("What are you going to do Mechanic?\n").upper()
 	while UserInput not in UserChoices:
-		print("Not Valid input")
+		print("Not Valid Input")
 		UserInput = input("What are you going to do Mechanic?\n")
 	# if statements for special inputs (not directions)
 	if UserInput == UserChoices[10] or UserInput == UserChoices[11]: # if user input is mission, print mission
 		mission()
-	elif UserInput == UserChoices[8] or UserInput == UserChoices[9]: # if user input is search
-		pass
 	elif UserInput == UserChoices[14] or UserInput == UserChoices[15]: # if user input is inventory
 		inventory()
+	if UserInput == UserChoices[16] or UserInput == UserChoices[17]:
+		quit()
 	return UserInput
 
-class Hallways():
-	pass
-	# init for player location?
-	# if random range in like 1 - divisble by four:
-	# print associated text
-	# create objects for special text?
-	# idk if thatd work
+class Rooms(object):
+	Enter = False # one way flag for first entering room
+	Parts = [] # list of plot important parts
+	# need to make loot function that randomizes loot and adds it to parts
+	
+	def __init__(self, name, parts, loot):
+		Enter = True
+		self.RoomName = name
+		self.Parts = parts # not sure i need these, might make loot a function that adds to parts
 
-class Rooms():
-	pass
+		roomText = random.randrange(1, 4) # pick random text for first entering room
+		if roomText == 1:
+			print("room text 1")
+		elif roomText == 2:
+			print("room text 2")
+		elif roomText == 3:
+			print("room text 3")
+		else:
+			"You dun goofed"
+
+	def __str__(self):
+		pass
+		# print room text with like 2 variations
 	# room have text
 	# room have value for loot
 	# room have random for the random items
 
+class Hallways(Rooms):
+	pass
+	# use same Init code with different input text, have like 8 possible text descriptions
+
+# need to make save option
+
 def end_game():
 	pass
-	# if player has things in inventory
-	# open command room
-	# dialogue and what not
+	if Gear in inventory and SparkPlug in inventory and LED in inventory and DuctTape in inventory: # if plot important parts are in inventory
+		print("woo")
+		# describe command room door opening
+		# you see the broken repair laser
+		# you fix it
+		# dragon
+		# pre-scripted fight
+	else: # else
+		print("You are still missing required items! Keep exploring!") # tell player to collect items
 
-# RUN GAME ------------------------------------------------------
+# RUN GAME ----------------------------------------------------------------------------------------------------------------------------------------
 # intro()
 UserInput = choice()
-print(UserInput) # sees if its saving the input right
-# get user input
-# depending on user input, run room function
-# need to track location
-# room function depends on location
+# print(UserInput) # CHECKS USER INPUT
+
+# if user input == U:
+	# print engine room
+# elif user input == R:
+	# print barracks
+# elif user input == D:
+	# print Break room
+# elif user input = L:
+	# print Ship dock
