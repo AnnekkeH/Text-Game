@@ -1,18 +1,20 @@
 import random
 import pickle
 
-UserChoices = ["U", "UP", "R", "RIGHT", "D", "DOWN", "L", "LEFT", "S", "SEARCH", "M", "MISSION", "U", "USE", "I", "INVENTORY", "Q", "QUIT", "H", "HELP"]
+UserChoices = ["U", "UP", "R", "RIGHT", "D", "DOWN", "L", "LEFT", "S", "SEARCH", "M", "MISSION", "E", "EAT", "I", "INVENTORY", "Q", "QUIT", "H", "HELP"] # indexes 12 and 13 are for easter egg
 UserInput = "test" # ALWAYS .UPPER UserInput
 Inventory = []
 info = Inventory
 menu = """
 	The Game!
+	Main Menu
 ----------------------------
+T - Tutorial
 N - Start New Game
 L - Load Saved Game
 S - Save Current Game
 Q - Quit
-	\n"""
+	\n""" # NEED TO ADD TUTORIAL, WILL ADD TIME AND WILL SHOW SEARCH
 BeenEngineBefore = False # awful, terrible flag names
 BeenBarracksBefore = False
 BeenBreakBefore = False
@@ -20,35 +22,32 @@ BeenDockBefore = False
 
 def mainMenu(): # bad bad programming, bad logic here too, it's procrastination's child
 	global info
-	choice = input(menu).upper()
+	choice = ''
 	while choice != 'Q':
+		choice = input(menu).upper() # ask inside while loop so it asks again
 		if choice == 'N': # start new file
 			with open(f"saveFile.dat", "wb") as file: # write it
 				print("New File Created!\n")
 				print("-----------------")
 			intro()
-			break
 		elif choice == 'L': # load existing file
 			try:
-				with open(f"saveFile.dat", 'rb') as file:
-					inventory = pickle.load(file)
-					print(inventory) # checks if loading works
-					break
-			except FileNotFoundError as e:
+				with open(f"saveFile.dat", 'rb') as file: # NEED TO MAKE CLASS USE THIS INFO THEN RUN MISSION ---------------------------
+					info = pickle.load(file)
+					Inventory = info.inventory #prints thing wrong
+					print(inventory) # checks if loading works # NEEDS TO SAY GAME SUCCESSFULLY LOADED
+					mission()
+			except (EOFError, FileNotFoundError):
 				print("Game file not found!")
 				print("Try saving first, or opening a new game.")
-				print(e)
-				choice = input(menu).upper()
 		elif choice == 'S': # save current file
 			try:
 				with open('saveFile.dat', 'wb') as file:
-					pickle.dump(info, f) # DOES NOT WORK
+					info = infoToSave
+					pickle.dump(info, file) # add all varibles to class then only save class
+					print("Save Successful.")
 			except:
-				print("Current Game Cannot Save") # ENTERS HERE THEN LEAVES
-				choice = input(menu).upper()
-		else:
-			print("Not Valid Input")
-			choice = input(menu).upper()
+				print("Current Game Cannot Save.")
 
 def intro(): # prints intro to game, add more description
 	print("You are a mechanic on one of the 'grandest' interstellar flights in history.")
@@ -71,6 +70,12 @@ def mission(): # Prints mission from start of game
 	print("--type “Mission” or “M” at any time to bring this menu back--")
 	choice()
 
+def tutorial(): # NOT DONE
+	pass
+	# open help menu
+	# describe movement
+	# explain search
+
 def help():
 	print("These are all of the commands you can use:\n")
 	print("""
@@ -87,7 +92,7 @@ def help():
 	""")
 	choice()
 
-def inventory(): # HAVE INSTRUCTIONS TO OPEN INVENTORY WHEN FIRST FIND OBJECT
+def inventory(): # HAVE INSTRUCTIONS TO OPEN INVENTORY WHEN FIRST FIND OBJECT # MAKE PLAYER INTERACTABLE
 	inventoryList = " "
 	print("You have the following in your inventory:")
 	for i in range(len(Inventory)):
@@ -97,6 +102,9 @@ def inventory(): # HAVE INSTRUCTIONS TO OPEN INVENTORY WHEN FIRST FIND OBJECT
 		print(Inventory[i])
 	#return inventoryList
 	choice()
+
+def easter_egg(): # NOT DONE
+	pass
 
 def random_loot():
 	item = int(random.randrange(1, 12))
@@ -135,6 +143,8 @@ def choice(): # checks if user choice is valid
 	# if statements for special inputs (not directions)
 	if UserInput == UserChoices[10] or UserInput == UserChoices[11]: # if user input is mission, print mission
 		mission()
+	elif UserInput == UserChoices[12] or UserInput == UserChoices[13]: # easter egg
+		easter_egg()
 	elif UserInput == UserChoices[14] or UserInput == UserChoices[15]: # if user input is inventory
 		inventory()
 	elif UserInput == UserChoices[16] or UserInput == UserChoices[17]: # quit to main menu
@@ -162,10 +172,13 @@ def quit():
 		choice()
 	else:
 		print("Not Valid Input")
+		confirm = input("Are you sure you want to save and quit? (Yes/No)\n").upper()
+
 
 # ROOM LINE ----------------------------------------------------------------------------------------------------
 # using objects would make this process a million times easier and i dont know why i didnt start with them
-# very proud that this at least works though and theres at least a little variation for 'gameplay'
+# very proud that this at least works though and that theres at least a little variation for 'gameplay'
+
 def engine_room(): # IF THERES TIME, ADD FLAG FOR FOUND COMMAND ROOM INTO MISSION
 	global BeenEngineBefore # need to make each room its own flag, need to also save to file DOESNT WORK RIGHT NOW
 	thing = '' # god awful varible name, i'm too tired to think of another way to say "users choice"
@@ -256,8 +269,16 @@ def end_game():
 class infoToSave(object):
 
 	def __init__(self):
-		self.inventory = inventory
+		self.__inventory = Inventory
+		# save flag settings
 		# save BeenHereBefore flags
+	@property
+	def inventory(self):
+		return inventory
+
+	@inventory.getter
+	def inventory(self, newInventory):
+		inventory = Inventory
 
 # RUN GAME ----------------------------------------------------------------------------------------------------------------------------------------
 mainMenu()
