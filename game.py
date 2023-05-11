@@ -4,7 +4,7 @@ import time
 
 UserChoices = ["U", "UP", "R", "RIGHT", "D", "DOWN", "L", "LEFT", "S", "SEARCH", "M", "MISSION", "E", "EAT", "I", "INVENTORY", "Q", "QUIT", "H", "HELP"] # indexes 12 and 13 are for easter egg
 UserInput = "if you see this, it's not working" # ALWAYS .UPPER UserInput
-Inventory = ['Gear', 'SparkPlug', 'LED', 'DuctTape']
+Inventory = [] # copy paste for bug testing: 'Gear', 'SparkPlug', 'LED', 'DuctTape'
 menu = """
 	The Game!
 	Main Menu
@@ -71,8 +71,8 @@ def mainMenu(): # bad bad programming and logic here, it's procrastination's chi
 				#print("Current Game Cannot Save.")
 
 def intro(): # prints intro to game, add more description
-	print("You are a mechanic on one of the 'grandest' interstellar flights in history.")
-	print("You must replace a valve in an ice miner on asteriod AST-R10B\n")
+	print("You are a skilled mechanic tasked with repairing a vital valve on an ice miner ship located on asteroid AST-R10B,")
+	print(" a desolate and treacherous location in the outer reaches of our galaxy. \n")
 	input("Press Enter.\n")
 	# something to elaborate just a tiny amount, then be like "suddenly"
 	print("You awake in a hallway that connects to 4 rooms. There are bright lights flashing and alarms going off.")
@@ -80,7 +80,7 @@ def intro(): # prints intro to game, add more description
 	input("Press Enter.\n")
 	mission()
 
-def mission(): # Prints mission from start of game
+def mission(): # Prints mission from start of game SAY THAT THE SUPER REPAIR LASER PREVENTS YOU FROM AWAKING
 	print("The Super Repair Laser broke in the Command Room! The parts are scattered across the space ship!")
 	print("You need to Search through the ship to find the missing parts.")
 	print("\nThe Super Repair Laser needs Gear, Spark Plug, Light Emitting Diode, and Duct Tape. They are located in the following areas:")
@@ -136,6 +136,7 @@ def tutorial(): # NOT DONE
 	print("You have completed the tutorial! Now onto the game!")
 
 def help():
+	global CurrentRoom
 	print("These are all of the commands you can use:\n")
 	print("""
 	U or Up - Moves Up
@@ -149,6 +150,7 @@ def help():
 	--
 	Q or Quit - Return to Main Menu
 	""")
+	CurrentRoom = 'SleepingPod'
 	choice()
 
 def inventory(): # HAVE INSTRUCTIONS TO OPEN INVENTORY WHEN FIRST FIND OBJECT # MAKE PLAYER INTERACTABLE
@@ -196,9 +198,9 @@ def random_loot():
 
 def choice(): # checks if user choice is valid
 	UserInput = input("\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
-	while UserInput not in UserChoices:
+	while UserInput not in UserChoices or 'S' in UserInput and CurrentRoom == 'SleepingPod': # prevents player from searching outside of a room
 		print("Not Valid Input")
-		UserInput = input("\nWhat are you going to do Mechanic?\t--Type H for help--\n")
+		UserInput = input("\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
 	# if statements for special inputs (not directions)
 	if UserInput == UserChoices[10] or UserInput == UserChoices[11]: # if user input is mission, print mission
 		mission()
@@ -213,13 +215,13 @@ def choice(): # checks if user choice is valid
 	elif 'U' in UserInput and CurrentRoom == 'EngineRoom': # DOESNT RUN CORRECTLY
 		end_game()
 		# visually pleasing pause
-	elif 'U' in UserInput:
+	elif 'U' in UserInput and CurrentRoom == 'SleepingPod':
 		engine_room()
-	elif 'R' in UserInput:
+	elif 'R' in UserInput and CurrentRoom == 'SleepingPod':
 		barracks()
-	elif 'D' in UserInput:
+	elif 'D' in UserInput and CurrentRoom == 'SleepingPod':
 		break_room()
-	elif 'L' in UserInput:
+	elif 'L' in UserInput and CurrentRoom == 'SleepingPod':
 		ship_dock()
 	else:
 		return UserInput
@@ -238,9 +240,8 @@ def quit(): # REQUIRES 3 ATTEMPTS TO LEAVE FOR SOME REASON, AFTER SAVING AND LOA
 # ROOM LINE ----------------------------------------------------------------------------------------------------
 # using objects would make this process a million times easier and i dont know why i didnt start with them
 # very proud that this at least works though and that theres at least a little variation for 'gameplay'
-# IF THERES TIME MAKE ROOMS CLASSES, SAVE THIS VERSION THO ONCE COMPLETE
 
-def engine_room(): # NEED TO ADD RETURN TO SLEEPING POD TEXT
+def engine_room():
 	global BeenEngineBefore, CurrentRoom, CommandRoomFound
 	CurrentRoom = 'EngineRoom'
 	thing = '' # god awful varible name, i'm too tired to think of another way to say "users choice"
@@ -260,11 +261,14 @@ def engine_room(): # NEED TO ADD RETURN TO SLEEPING POD TEXT
 		print("You start to give up when you see a shiny Gear at the bottom of the box!")
 		Inventory.append("Gear")
 		print("\nA Gear has been added to your inventory!")
-		# HERE
+		input("Press Enter") # sends player back to sleeping pod for choice to work
+		print("You return back to your sleeping pod.")
+		CurrentRoom = 'SleepingPod'
 	choice()
 
 def barracks():
-	global BeenBarracksBefore
+	global BeenBarracksBefore, CurrentRoom
+	CurrentRoom = 'Barracks'
 	thing = ''
 	if BeenBarracksBefore == False:
 		print("You enter the Barracks. There are rows of empty sleeping pods on each side of you.")
@@ -283,12 +287,14 @@ def barracks():
 		Inventory.append("SparkPlug")
 		print("\nSpark Plug has been added to your inventory!")
 		random_loot()
-		input("Press Enter.\n")
-		print("You return back to your original sleeping pod.")
+		input("Press Enter")
+		print("You return back to your sleeping pod.")
+		CurrentRoom = 'SleepingPod'
 		choice()
 
 def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE WAIT 90 SECONDS TO GET COFFEE
-	global BeenBreakBefore
+	global BeenBreakBefore, CurrentRoom
+	CurrentRoom = 'BreakRoom'
 	if BeenBreakBefore == False:
 		thing = ''
 		print("You enter the break room. There are tables throughout the room, each with a light hanging above it.")
@@ -298,9 +304,10 @@ def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE
 		thing = choice()
 	elif BeenBreakBefore == True: # TESTING STILL
 		print("You enter the break room. The box of lightbulbs is in the back corner.")
+		thing = choice()
 		if thing == UserChoices[8] or thing == UserChoices[9]: # search crates
-		thing2 = input("There is a coffee machine next to the vending machine. Would you like a cup of coffee? (Yes/No)")
-			if 'Y' in thing2:
+			thing2 = input("There is a coffee machine next to the vending machine. Would you like a cup of coffee? (Yes/No)")
+			while 'N' not in thing2:
 				print("You press the power button on the coffee machine. It starts boiling the water and making your coffee.")
 				print("The screen says 'Making Coffee:")
 				for i in range(30, 0, -1):
@@ -308,7 +315,10 @@ def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE
 					time.sleep(1)
 				print("Your hot cup of coffee dispenses.")
 				Inventory.append("Coffee")
-		thing = choice()
+			if 'N' in thing2:
+				print("Good Choice.")
+			else:
+				print("Not Valid Input.")
 
 	if thing == UserChoices[8] or thing == UserChoices[9]: # search boxes
 		print("You investigate the lightbulb box. The majority of them are incandesant, which is stupid for a spaceship.")
@@ -316,20 +326,88 @@ def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE
 		Inventory.append("LED") # ADD RANDOM OBJECTS FOR FUNSIES
 		print("\nAn LED has been added to your inventory!")
 		random_loot()
+		input("Press Enter")
+		print("You return back to your sleeping pod.")
+		CurrentRoom = 'SleepingPod'
 		choice()
 
-def ship_dock():
+def ship_dock(): # NEEDS MORE DESCRIPTION IS THERES TIME, MAYBE MAKE DUCT TAPE CHOICE AN ACHIEVEMENT
+	global CurrentRoom
+	CurrentRoom = 'ShipDock'
+	thing = ''
+	random = random.randrange(1, 10)
 	print("You have entered the Ship Dock! Annekke forgot to add descriptive text!")
+	if BeenDockBefore == False:
+		print("The ship dock on this cargo vessel is a marvel of engineering, designed to accommodate a wide range of spacecraft and provide a secure connection for transporting cargo and personnel across the vast expanse of space. ")
+		print("As you enter the ship dock, you notice the smooth, polished surfaces of the walls and floors, which are made of a durable, lightweight material that can withstand the rigors of space travel.")
+		print("The ceiling of the dock is a curved dome, providing a panoramic view of the surrounding stars and galaxies.")
+		print("Next to the door there is a table with duct tape on top of it. The duct tape stacked in tall towers, maybe the custodian was bored?")
+		thing = choice()
+	elif BeenDockBefore == True:
+		print("The ship dock on this cargo vessel is a spacious, well-lit chamber equipped with advanced docking clamps and mechanical arms that can securely lock onto a variety of ship designs.")
+		print("To your right is the table with the towers of duct tape.")
+
+	if thing == UserChoices[8] or thing == UserChoices[9]: # take the tape
+		if random == 4:
+			print("You grab for the roll on the top, but change your mind and grab a roll from the middle.")
+			print('The tower falls over.')
+		else:
+			print("You take a roll of duct tape from the top of the tower.")
+		Inventory.append("DuctTape")
+		print("\nDuct Tape has been added to your inventory!")
+		random_loot()
+		input("Press Enter")
+		print("You return back to your sleeping pod.")
+		CurrentRoom = 'SleepingPod'
 	thing = choice()
 
-def end_game(): # CHEESE GAME TIME WITH 3 SECOND REPAIR TIMERS
+def end_game(): # NOT LEAVING GAME CORRECTLY
+	global TutorialComplete
+	thing = ''
+	nerd = False
+	burn = random.randrange(1, 10)
+	UseableParts = ['G', 'GEAR', 'S', 'SPARK PLUG', 'L', 'LED', 'LIGHT EMITTING DIODE', 'D', 'DUCT TAPE']
 	if "Gear" in Inventory and "SparkPlug" in Inventory and "LED" in Inventory and "DuctTape" in Inventory: # if plot important parts are in inventory
 		print("After rumaging around the ship you have found all 4 parts.")
-		print("You manage to force the Command Room door open.") # the front of the ship is damaged by an asteroid, you repair the laser and watch the ship be rebuilt in front of you
-		# describe command room door opening
-		# you see the broken repair laser
-		# you fix it
-		# have end game wrap up of what extras you got, if you completed without a tutorial, if you found the easter egg
+		print("You manage to force the Command Room door open.\n")
+		input("Press Enter")
+		print("You see that the front of the ship has been damaged by an asteroid.")
+		print("The Super Repair Laser is in several pieces, it's definitely broken.\n")
+		print("You pull out the Gear, Spark Plug, LED, and Duct Tape.")
+		for i in range(4):
+			thing = input("What would you like to use?\n").upper()
+			if 'G' in thing:
+				print('The pully system that moves the arm up and down is missing its gear.')
+				print("You take the tread on the motor off, and replace the gear.")
+				print("It will take a few seconds to tighten the bolt all the way.\n")
+				for i in range(4, 0, -1):
+					time.sleep(1)
+				print("The bolt clicks as it is tightened into place.\n")
+			elif 'S' in thing:
+				print("You don't really know what this does, but theres a spot in head of the laser where it seems to fit.")
+				print("You put the Spark Plug into its hole.\n")
+			elif 'L' in thing:
+				print("The tip of the laser needs an LED to turn on.")
+				print("You insert the LED into the hole.")
+				if burn == 2:
+					print("The laser was on when it broke, the laser turns on and burns you.")
+			elif 'D' in thing:
+				print("The body of the laser is damaged and there are parts coming off of the frame.")
+				print("You unroll some duct tape and tape the body back together.")
+			else:
+				print("Not Valid Input")
+		print("\n\n\tYou have successfully repaired the laser!")
+		print("It starts repairing the front of the space ship automatically.")
+		print("You return back to your sleeping pod and go back to sleep.")
+		input("Press Enter")
+		print("\n\n\n")
+		print("Thank you for playing The Game. I hope you enjoyed it.")
+		print("All Programming was done by me.")
+		print("Thank you to Eric Burt for helping me debug my game, and to my siblings for playtesting.")
+		print("Thank you to ChatGPT for helping me write description.")
+		if TutorialComplete == False:
+			print("You completed the game without using the tutorial! Good job!")
+		mainMenu() # NOT WORKING RIGHT
 	else: # else
 		print("You are still missing required items! Keep exploring!") # tell player to collect items, describe door not working properly
 
