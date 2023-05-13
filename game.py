@@ -77,10 +77,10 @@ def intro(): # prints intro to game, add more description
 	input("\nPress Enter.\n")
 	print("Travelling to AST-R10B takes a few months so it requires you be in cryosleep. You have your own sleeping pod.")
 	print("The 5h-1P is equipped with a special 'Super Repair Laser' so that if anything goes wrong in travel, you won't have to be awoken.")
-	print("It is a very complex ship, and its better than the majority of ships you've been apart of.")
+	print("It is a very complex ship, and its better than the majority of ships you've been apart of.\n")
 	input("\nPress Enter.\n")
 	print("As you drift in and out of consciousness, you become aware of a persistent, high-pitched sound that gradually grows louder and more insistent.")
-	print("It takes you a moment to realize that it's an alarm.")
+	print("It takes you a moment to realize that it's an alarm.\n")
 	input("\nPress Enter.\n")
 	print("You awaken with a start to the sound of blaring alarms. Your head is pounding, and your vision is blurred.")
 	print("You find yourself in the middle of a circular room with four hallways branching off in different directions.")
@@ -90,7 +90,7 @@ def intro(): # prints intro to game, add more description
 	mission()
 
 def mission(): # Prints mission from start of game
-	print("The Super Repair Laser broke in the Command Room! The parts are scattered across the space ship!")
+	print("\nThe Super Repair Laser broke in the Command Room! The parts are scattered across the space ship!")
 	print("You need to Search through the ship to find the missing parts.")
 	print("\nThe Super Repair Laser needs Gear, Resistor, Light Emitting Diode, and Duct Tape. They are located in the following areas:")
 	if 'Gear' in Inventory:
@@ -121,7 +121,7 @@ def tutorial(): # Should I have made this its own file? probably. Did I? nope
 	thing = ''
 	print("Welcome to The Game!\n")
 	print("Your goal in The Game is to collect items around a spaceship.")
-	print("""You can use these commands are for movement:
+	print("""You can type these phrases for movement:
 	U or Up    - Move Up 1 Room
 	R or Right - Move Right 1 Room
 	D or Down  - Move Down 1 Room
@@ -254,10 +254,11 @@ def random_loot():
 		pass
 
 def choice(): # checks if user choice is valid
-	UserInput = input("\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
+	global CurrentRoom
+	UserInput = input("\n\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
 	while UserInput not in UserChoices or 'S' in UserInput and CurrentRoom == 'SleepingPod': # prevents player from searching outside of a room
 		print("Not Valid Input")
-		UserInput = input("\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
+		UserInput = input("\n\nWhat are you going to do Mechanic?\t--Type H for help--\n").upper()
 	# if statements for special inputs (not directions)
 	if UserInput == UserChoices[10] or UserInput == UserChoices[11]: # if user input is mission, print mission
 		mission()
@@ -271,6 +272,7 @@ def choice(): # checks if user choice is valid
 		help()
 	elif 'U' in UserInput and CurrentRoom == 'EngineRoom':
 		end_game()
+		CurrentRoom = "SleepingPod"
 		# visually pleasing pause
 	elif 'U' in UserInput and CurrentRoom == 'SleepingPod':
 		engine_room()
@@ -303,23 +305,26 @@ def engine_room():
 	CurrentRoom = 'EngineRoom'
 	thing = '' # god awful varible name, i'm too tired to think of another way to say "users choice"
 	if BeenEngineBefore == False:
-		print("You enter the Engine Room. The room is full of pipes and meters that all connect to the engine in the middle.")
+		print("You enter the Engine Room.\nThe room is full of pipes and meters that all connect to the engine in the middle.")
 		print("Behind the engine, you see a sliding door. It appears to be damaged. On the door, there is scratched paint that says 'Command Room'.")
 		print("Over on the right side of the room, there is a pile of crates labelled 'Spare Parts'. Maybe that is useful?\n")
 		thing = choice()
 		BeenEngineBefore = True
 		CommandRoomFound = True
 	elif BeenEngineBefore == True:
-		print("You enter the Engine Room. The pile of crates is to your right. The Command Room is ahead of you.")
-		thing = choice()
+		print("You enter the Engine Room.\nThe pile of crates is to your right. The Command Room is ahead of you.\n")
+		if 'U' in thing:
+			end_game()
+		else:
+			thing = choice()
 	
 	if thing == UserChoices[8] or thing == UserChoices[9]: # search crates
 		print("You go through the crates. They are full of extra hosing, pipes, tape, and random nuts and bolts.")
 		print("You start to give up when you see a shiny Gear at the bottom of the box!")
 		Inventory.append("Gear")
-		print("\nA Gear has been added to your inventory!")
-		input("Press Enter") # sends player back to sleeping pod for choice to work
-		print("You return back to your sleeping pod.")
+		print("\nA Gear has been added to your inventory!\n")
+		input("\nPress Enter\n") # sends player back to sleeping pod for choice to work
+		print("You return back to your sleeping pod.\n")
 		CurrentRoom = 'SleepingPod'
 	choice()
 
@@ -328,15 +333,16 @@ def barracks():
 	CurrentRoom = 'Barracks'
 	thing = ''
 	if BeenBarracksBefore == False:
-		print("You enter the Barracks. The Barracks on 5H-1P is a compact yet efficient living space designed to accommodate the crew during their long interstellar journeys.")
+		print("You enter the Barracks.\n")
+		print("The Barracks on 5H-1P is a compact yet efficient living space designed to accommodate the crew during their long interstellar journeys.")
 		print("The interior of the Barracks is dimly lit, with soft blue LED lights illuminating the space.")
 		print("The walls of the Barracks are lined with sleek cryogenic sleep pods, each pod designed to house a single occupant in a state of suspended animation.")
 		print("Scanning down the rows of sleeping pods you see an open one labelled 'Mechanic'. Very strange how you did not wake up here.")
-		print("At the foot of the Mechanic sleeping pod there is a toolbox that is slighty ajar. Maybe there's another gear?")
+		print("At the foot of the Mechanic sleeping pod there is a toolbox that is slighty ajar. Maybe there's another gear?\n")
 		BeenBarracksBefore = True
 		thing = choice()
 	elif BeenBarracksBefore == True:
-		print("You enter the Barracks. The Mechanic's sleeping pod is on your left and the open toolbox is at its foot.")
+		print("You enter the Barracks.\nThe Mechanic's sleeping pod is on your left and the open toolbox is at its foot.\n")
 		thing = choice()
 	
 	if thing == UserChoices[8] or thing == UserChoices[9]: # search toolbox
@@ -344,10 +350,10 @@ def barracks():
 		print("In the top row of dividers, you find a container labelled Resistors.")
 		print('You put the Resistors in your pocket.')
 		Inventory.append("Resistor")
-		print("\nResistor has been added to your inventory!")
+		print("\nResistor has been added to your inventory!\n")
 		random_loot()
-		input("Press Enter")
-		print("You return back to your sleeping pod.")
+		input("\nPress Enter\n")
+		print("You return back to your sleeping pod.\n")
 		CurrentRoom = 'SleepingPod'
 		choice()
 
@@ -359,10 +365,10 @@ def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE
 		print("You enter the break room. There are tables throughout the room, each with a light hanging above it.")
 		print("There are motivational posters on the walls, as well as 4 month old announcements that no one has bothered to take down.")
 		print("To your left there seems to be an old salad bar. Next to it is an empty vending machine.")
-		print("In the back corner of the room there is a box of lightbulbs on a table. Maybe the LED is there?")
+		print("In the back corner of the room there is a box of lightbulbs on a table. Maybe the LED is there?\n")
 		thing = choice()
 	elif BeenBreakBefore == True: # TESTING STILL
-		print("You enter the break room. The box of lightbulbs is in the back corner.")
+		print("You enter the break room. The box of lightbulbs is in the back corner.\n")
 		thing = choice()
 		if thing == UserChoices[8] or thing == UserChoices[9]: # search crates
 			thing2 = input("There is a coffee machine next to the vending machine. Would you like a cup of coffee? (Yes/No)")
@@ -383,10 +389,10 @@ def break_room(): # HAVE EASTER EGG IF DO SEARCH TWICE, FIND COFFEE MACHINE MAKE
 		print("You investigate the lightbulb box. The majority of them are incandesant, which is stupid for a spaceship.")
 		print("At the bottom of the box, laying in all of its technological glory, you find an LED!")
 		Inventory.append("LED") # ADD RANDOM OBJECTS FOR FUNSIES
-		print("\nAn LED has been added to your inventory!")
+		print("\nAn LED has been added to your inventory!\n")
 		random_loot()
-		input("Press Enter")
-		print("You return back to your sleeping pod.")
+		input("\nPress Enter.\n")
+		print("You return back to your sleeping pod.\n")
 		CurrentRoom = 'SleepingPod'
 		choice()
 
@@ -402,12 +408,13 @@ def ship_dock():
 		print("As you enter the ship dock, you notice the smooth, polished surfaces of the walls and floors,")
 		print("which are made of a durable, lightweight material that can withstand the rigors of space travel.")
 		print("The ceiling of the dock is a curved dome, providing a panoramic view of the surrounding stars and galaxies.")
-		print("Next to the door there is a table with duct tape on top of it. The duct tape stacked in tall towers, maybe the custodian was bored?")
+		print("Next to the door there is a table with duct tape on top of it. The duct tape stacked in tall towers, maybe the custodian was bored?\n")
 		thing = choice()
 	elif BeenDockBefore == True:
 		print("The ship dock on this cargo vessel is a spacious, well-lit chamber equipped with advanced docking clamps and")
 		print("mechanical arms that can securely lock onto a variety of ship designs.")
-		print("To your right is the table with the towers of duct tape.")
+		print("To your right is the table with the towers of duct tape.\n")
+		thing = choice()
 
 	if thing == UserChoices[8] or thing == UserChoices[9]: # take the tape
 		if randomNum == 4:
@@ -416,15 +423,19 @@ def ship_dock():
 		else:
 			print("You take a roll of duct tape from the top of the tower.")
 		Inventory.append("DuctTape")
-		print("\nDuct Tape has been added to your inventory!")
+		print("\nDuct Tape has been added to your inventory!\n")
 		random_loot()
-		input("Press Enter")
-		print("You return back to your sleeping pod.")
+		input("\nPress Enter.\n")
+		print("You return back to your sleeping pod.\n")
 		CurrentRoom = 'SleepingPod'
 	thing = choice()
 
 def end_game(): # NOT LEAVING GAME CORRECTLY
 	global TutorialComplete
+	complete1 = False
+	complete2 = False
+	complete3 = False
+	complete4 = False
 	thing = ''
 	nerd = False
 	burn = random.randrange(1, 10)
@@ -432,44 +443,57 @@ def end_game(): # NOT LEAVING GAME CORRECTLY
 	if "Gear" in Inventory and "Resistor" in Inventory and "LED" in Inventory and "DuctTape" in Inventory: # if plot important parts are in inventory
 		print("After rumaging around the ship you have found all 4 parts.")
 		print("You manage to force the Command Room door open.\n")
-		input("Press Enter")
+		input("\nPress Enter.\n")
 		print("You see that the front of the ship has been damaged by an asteroid.")
 		print("The Super Repair Laser is in several pieces, it's definitely broken.\n")
 		print("You pull out the Gear, Resistor, LED, and Duct Tape.")
-		for i in range(4):
-			thing = input("What would you like to use?\n").upper()
-			if 'G' in thing:
+		while (complete1 != True) or (complete2 != True) or (complete3 != True) or (complete4 != True):
+			thing = input("\n\nWhat would you like to use?\n").upper()
+			if thing == UseableParts[0] or thing == UseableParts[1]:
 				print('The pully system that moves the arm up and down is missing its gear.')
 				print("You take the tread on the motor off, and replace the gear.")
 				print("It will take a few seconds to tighten the bolt all the way.\n")
 				for i in range(4, 0, -1):
 					time.sleep(1)
 				print("The bolt clicks as it is tightened into place.\n")
-			elif 'R' in thing:
+				complete1 = True
+			if thing == UseableParts[2] or thing == UseableParts[3]:
 				print("You don't really know what this does, but theres a spot in head of the laser where it seems to fit.")
 				print("You put the Resistor into its hole.\n")
-			elif 'L' in thing:
+				complete2 = True
+			if thing == UseableParts[4] or thing == UseableParts[5] or thing == UseableParts[6]:
 				print("The tip of the laser needs an LED to turn on.")
-				print("You insert the LED into the hole.")
+				print("You insert the LED into the hole.\n")
 				if burn == 2:
-					print("The laser was on when it broke, the laser turns on and burns you.")
-			elif 'D' in thing:
+					print("The laser was on when it broke, the laser turns on and burns you.\n")
+				if thing == UseableParts[6]:
+					nerd = True
+				complete3 = True
+			if thing == UseableParts[7] or thing == UseableParts[8]:
 				print("The body of the laser is damaged and there are parts coming off of the frame.")
-				print("You unroll some duct tape and tape the body back together.")
-			else:
-				print("Not Valid Input")
+				print("You unroll some duct tape and tape the body back together.\n")
+				complete4 = True
+		input("\nPress Enter.\n")
 		print("\n\n\tYou have successfully repaired the laser!")
 		print("It starts repairing the front of the space ship automatically.")
 		print("You return back to your sleeping pod and go back to sleep.")
-		input("Press Enter")
+		input("\nPress Enter.\n")
 		print("\n\n\n")
-		print("Thank you for playing The Game. I hope you enjoyed it.")
-		print("All Programming was done by me.")
-		print("Thank you to Eric Burt for helping me debug my game, and to my siblings for playtesting.")
-		print("Thank you to ChatGPT for helping me write description.")
+		str = 'Thank you for playing The Game. I hope you enjoyed it.'
+		print(f"{str:^150}")
+		str = 'All Programming was done by me.'
+		print(f"{str:^150}")
+		str = 'Thank you to Eric Burt for helping me debug my game, and to my siblings for playtesting.'
+		print(f"{str:^150}")
+		str = 'Thank you to ChatGPT for helping me write description.\n\n'
+		print(f"{str:^150}")
 		if TutorialComplete == False:
-			print("You completed the game without using the tutorial! Good job!")
-		mainMenu() # NOT WORKING RIGHT
+			print("\nYou completed the game without using the tutorial! Good job!")
+		if nerd == True:
+			print("\nYou are a nerd, you typed out 'Light Emitting Diode'.")
+		if burn == 2:
+			print("\nHa! You got burned!")
+		print("\n\nTo exit the game, type Quit or Q")
 	else: # else
 		print("You are still missing required items! Keep exploring!") # tell player to collect items, describe door not working properly
 
@@ -552,3 +576,5 @@ class infoToSave(object):
 
 # RUN GAME ----------------------------------------------------------------------------------------------------------------------------------------
 mainMenu()
+
+# text formatting NOTHING WIDER THAN 146 CHARACTERS
