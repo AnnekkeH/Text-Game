@@ -488,12 +488,14 @@ def end_game(): # NOT LEAVING GAME CORRECTLY
 		str = 'Thank you to ChatGPT for helping me write description.\n\n'
 		print(f"{str:^150}")
 		if TutorialComplete == False:
-			print("\nYou completed the game without using the tutorial! Good job!")
+			print("\nYou completed the game without using the tutorial! Good job!\n")
 		if nerd == True:
-			print("\nYou are a nerd, you typed out 'Light Emitting Diode'.")
+			print("\nYou are a nerd, you typed out 'Light Emitting Diode'.\n")
 		if burn == 2:
-			print("\nHa! You got burned!")
-		print("\n\nTo exit the game, type Quit or Q")
+			print("\nHa! You got burned!\n")
+		exit() # game was not ever exiting right and this is killing me, this is my solution. I am aware that the problem lies in how all of my rooms are functions
+		# to solve this issue I should have there be actual coordinates and directions for the players to go and not just simple functions
+		# im too tired for that and all of my final projects are due at once for some reason
 	else: # else
 		print("You are still missing required items! Keep exploring!") # tell player to collect items, describe door not working properly
 
